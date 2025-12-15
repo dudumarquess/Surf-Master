@@ -1,0 +1,63 @@
+version: "3.9"
+
+services:
+  # ====== DB ======
+  pgserver:
+    image: postgres:16
+    container_name: pgserver
+    environment:
+      - POSTGRES_USER=surfguru
+      - POSTGRES_PASSWORD=surfguru
+      - POSTGRES_DB=surfgurudb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - dbnet
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U surfguru -d surfgurudb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ====== APP (Spring Boot) ======
+  surfmaster-backend:
+    image: surf-master-backend:latest
+    build:
+      context: . # <— se teu Dockerfile está em backend/
+      dockerfile: Dockerfile # (opcional se o nome já for Dockerfile)
+    container_name: surfmaster-backend
+    depends_on:
+      pgserver:
+        condition: service_healthy
+    environment:
+      # Spring Datasource
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://pgserver:5432/surfgurudb
+      - SPRING_DATASOURCE_USERNAME=surfguru
+      - SPRING_DATASOURCE_PASSWORD=surfguru
+      # Perfil e tuning
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_FLYWAY_ENABLED=false
+      - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75
+      # LLM provider (troque fácil no futuro)
+      - SURF_LLM_PROVIDER=${SURF_LLM_PROVIDER:-groq}
+      - SURF_LLM_MODEL=${SURF_LLM_MODEL:-llama-3-8b}
+      - SURF_LLM_API_KEY=$${SURF_LLM_API_KEY:${SURF_LLM_API_KEY}}
+      - SURF_LLM_BASE_URL=${SURF_LLM_BASE_URL:-https://api.groq.com/openai/v1}
+    ports:
+      - "8080:8080"
+    networks:
+      - dbnet
+    restart: unless-stopped
+    # se quiser log em arquivo dentro do container:
+    # volumes:
+    #   - ./logs:/app/logs
+
+volumes:
+  postgres-data:
+
+networks:
+  dbnet:
+    driver: bridge
