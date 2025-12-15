@@ -58,3 +58,44 @@ All sensitive configuration is handled through **environment variables**.
 Example:
 ```bash
 SURF_LLM_API_KEY=your_api_key_here
+```
+## ▶️ Running the Project
+
+### Backend (local)
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+### Backend (Docker)
+```bash
+cd backend
+docker-compose up --build
+```
+
+The API will be available at:
+```bash
+http://localhost:8080
+```
+
+---
+
+## 🎯 Project Goals
+- Apply production-grade backend architecture
+
+- Integrate LLMs responsibly (secure secrets, clean abstractions)
+
+- Build a non-trivial, real-world decision-support application
+
+- Serve as a portfolio project for backend and AI-oriented roles
+
+## 🧠 Project Status
+- Backend core: ✅ implemented
+
+- LLM integration:  🚧 in progress
+
+Forecast logic: 🚧 in progress
+
+Frontend: 🚧 in progress
+
+Tests: 🚧 in progress
