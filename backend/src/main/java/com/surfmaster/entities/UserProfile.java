@@ -30,7 +30,8 @@ public class UserProfile {
     private UserLevel level;
 
 
-    @ElementCollection(targetClass = BoardType.class)
+    @Builder.Default
+    @ElementCollection(targetClass = BoardType.class, fetch = FetchType.EAGER)
     @CollectionTable(
             name = "user_profile_boards",
             joinColumns = @JoinColumn(name = "user_profile_id")

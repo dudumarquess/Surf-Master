@@ -38,7 +38,7 @@ public class DevDataSeeder implements CommandLineRunner {
                 .latitude(38.6789).longitude(-9.3210)
                 .swellBestDirection(Direction.W)
                 .windBestDirection(Direction.E)
-                .recommendedLevel(UserLevel.BEGGINER)
+                .recommendedLevel(UserLevel.BEGINNER)
                 .notes(List.of("Beach break", "Melhor com offshore de leste"))
                 .build();
 

@@ -1,7 +1,7 @@
 package com.surfmaster.entities;
 
 public enum UserLevel {
-    BEGGINER,
+    BEGINNER,
     INTERMEDIATE,
     ADVANCED
 }

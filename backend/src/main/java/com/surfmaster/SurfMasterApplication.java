@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+
 
 @SpringBootApplication
 public class SurfMasterApplication {
@@ -20,5 +22,10 @@ public class SurfMasterApplication {
         return (args) -> {
             System.out.println("do some sanity tests here");
         };
+    }
+
+    @Bean
+    public Clock clock() {
+        return Clock.systemUTC();
     }
 }
