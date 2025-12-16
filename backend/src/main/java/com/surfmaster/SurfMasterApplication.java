@@ -10,9 +10,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.surfmaster.config.ForecastProperties;
+import com.surfmaster.config.LlmProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties(ForecastProperties.class)
+@EnableConfigurationProperties({ForecastProperties.class, LlmProperties.class})
 public class SurfMasterApplication {
     public static void main(String[] args) {
         SpringApplication.run(SurfMasterApplication.class, args);

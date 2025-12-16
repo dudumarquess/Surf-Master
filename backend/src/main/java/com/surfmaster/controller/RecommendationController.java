@@ -20,24 +20,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Endpoints responsáveis por gerar recomendações personalizadas de picos.
+ * Endpoints responsible for generating personalized spot recommendations.
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/recommendations")
-@Tag(name = "Recommendations", description = "Sugere melhores picos/horários com base nas preferências do usuário.")
+@Tag(name = "Recommendations", description = "Suggests the best spots/times based on user preferences.")
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
 
     /**
-     * Gera recomendações com base nos filtros enviados pelo consumidor.
+     * Generates recommendations based on the provided filters.
      */
-    @Operation(summary = "Gera recomendações", description = "Avalia previsões e ranqueia os melhores picos para o período informado.")
+    @Operation(summary = "Generate recommendations", description = "Evaluates forecasts and ranks the best spots for the requested time frame.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Recomendações calculadas com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Parâmetros inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado ao gerar recomendações", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Recommendations generated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid parameters", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected error while generating recommendations", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping
     public ResponseEntity<?> recommend(@Valid @RequestBody RecommendationRequest request) {
@@ -47,7 +47,7 @@ public class RecommendationController {
         } catch (IllegalArgumentException e) {
             return errorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível gerar recomendações neste momento.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to generate recommendations right now.", e);
         }
     }
 

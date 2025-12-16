@@ -4,6 +4,7 @@ import com.surfmaster.dto.ApiErrorResponse;
 import com.surfmaster.dto.ChatMessageDto;
 import com.surfmaster.dto.ChatSessionDto;
 import com.surfmaster.dto.CreateChatMessageRequest;
+import com.surfmaster.dto.ResetChatSessionRequest;
 import com.surfmaster.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,23 +26,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.NoSuchElementException;
 
 /**
- * Controlador responsável por criar sessões de chat e intermediar mensagens.
+ * Controller responsible for creating chat sessions and forwarding messages.
  */
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/chat")
-@Tag(name = "Chat", description = "Gerencia sessões de chat e troca de mensagens com o Mestre do Surf.")
+@Tag(name = "Chat", description = "Manages chat sessions and message exchange with the Surf Master.")
 public class ChatController {
     private final ChatService chatService;
 
     /**
-     * Abre uma sessão de chat para um determinado pico.
+     * Opens a chat session for a given spot.
      */
-    @Operation(summary = "Abre uma nova sessão", description = "Cria uma sessão de chat vinculada a um pico e, opcionalmente, a um usuário.")
+    @Operation(summary = "Open a new session", description = "Creates a chat session attached to a spot and optionally to a user.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Sessão criada"),
-            @ApiResponse(responseCode = "404", description = "Pico ou usuário não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "201", description = "Session created"),
+            @ApiResponse(responseCode = "404", description = "Spot or user not found", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping("/sessions/{spotId}")
     public ResponseEntity<?> openSession(@PathVariable Long spotId, @RequestParam(required = false) Long userId) {
@@ -49,40 +50,40 @@ public class ChatController {
             ChatSessionDto dto = chatService.openSession(spotId, userId);
             return ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (NoSuchElementException e) {
-            return errorResponse(HttpStatus.NOT_FOUND, "Não encontramos o pico ou usuário informado.", e);
+            return errorResponse(HttpStatus.NOT_FOUND, "Spot or user not found.", e);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao criar sessão de chat.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create chat session.", e);
         }
     }
 
     /**
-     * Recupera uma sessão pelo identificador.
+     * Retrieves a session by its identifier.
      */
-    @Operation(summary = "Consulta sessão", description = "Retorna metadados e histórico de mensagens da sessão.")
+    @Operation(summary = "Fetch a session", description = "Returns metadata and message history for the session.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Sessão encontrada"),
-            @ApiResponse(responseCode = "404", description = "Sessão inexistente", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Session found"),
+            @ApiResponse(responseCode = "404", description = "Session not found", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/sessions/{sessionId}")
     public ResponseEntity<?> getSession(@PathVariable Long sessionId) {
         try {
             return ResponseEntity.ok(chatService.getSession(sessionId));
         } catch (NoSuchElementException e) {
-            return errorResponse(HttpStatus.NOT_FOUND, "Sessão de chat não encontrada para o id " + sessionId + ".", e);
+            return errorResponse(HttpStatus.NOT_FOUND, "Chat session not found for id " + sessionId + ".", e);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao recuperar a sessão.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch the session.", e);
         }
     }
 
     /**
-     * Registra uma nova mensagem enviada pelo usuário.
+     * Registers a new user message.
      */
-    @Operation(summary = "Envia mensagem", description = "Aceita mensagens do usuário e repassa para o serviço de chat.")
+    @Operation(summary = "Send a message", description = "Accepts user messages and forwards them to the chat service.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Mensagem registrada"),
-            @ApiResponse(responseCode = "404", description = "Sessão não encontrada", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Message stored"),
+            @ApiResponse(responseCode = "404", description = "Session not found", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping("/messages")
     public ResponseEntity<?> sendMessage(@RequestBody CreateChatMessageRequest message) {
@@ -90,9 +91,30 @@ public class ChatController {
             ChatMessageDto dto = chatService.postUserMessage(message);
             return ResponseEntity.ok(dto);
         } catch (NoSuchElementException e) {
-            return errorResponse(HttpStatus.NOT_FOUND, "Sessão de chat não localizada para registrar a mensagem.", e);
+            return errorResponse(HttpStatus.NOT_FOUND, "Chat session not found when storing the message.", e);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível registrar a mensagem.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Could not store the message.", e);
+        }
+    }
+
+    /**
+     * Resets an existing session by changing the spot/user and wiping the history.
+     */
+    @Operation(summary = "Reset session", description = "Clears the history and updates the spot/user associated with a chat session.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Session reset"),
+            @ApiResponse(responseCode = "404", description = "Session, spot, or user not found", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    @PostMapping("/sessions/{sessionId}/reset")
+    public ResponseEntity<?> resetSession(@PathVariable Long sessionId, @RequestBody ResetChatSessionRequest request) {
+        try {
+            ChatSessionDto dto = chatService.resetSession(sessionId, request.spotId(), request.userId());
+            return ResponseEntity.ok(dto);
+        } catch (NoSuchElementException e) {
+            return errorResponse(HttpStatus.NOT_FOUND, "Session, spot, or user not found for reset.", e);
+        } catch (Exception e) {
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to reset the chat session.", e);
         }
     }
 

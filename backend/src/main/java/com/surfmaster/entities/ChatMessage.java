@@ -21,6 +21,7 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)
     private ChatRole chatRole;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @CreationTimestamp

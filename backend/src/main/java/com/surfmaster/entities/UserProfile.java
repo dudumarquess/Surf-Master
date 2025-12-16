@@ -20,11 +20,11 @@ public class UserProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Opcional: nome “público” que o user preferir */
+    /** Optional: “public” name the user prefers */
     @Column(length = 120)
     private String displayName;
 
-    /** Nível de surf sugerido para personalização */
+    /** Suggested surfer level for personalization */
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private UserLevel level;

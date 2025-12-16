@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Camada responsável por orquestrar operações relacionadas a {@link UserProfile}.
- * Contém validações e conversões entre entidades e DTOs.
+ * Layer responsible for orchestrating operations related to {@link UserProfile}.
+ * Contains validations and conversions between entities and DTOs.
  */
 @Service
 @RequiredArgsConstructor
@@ -25,9 +25,9 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
 
     /**
-     * Retorna todos os perfis cadastrados.
+     * Returns every stored profile.
      *
-     * @return lista de {@link UserProfileDto}
+     * @return list of {@link UserProfileDto}
      */
     public List<UserProfileDto> listProfiles() {
         return userProfileRepository.findAll()
@@ -37,11 +37,11 @@ public class UserProfileService {
     }
 
     /**
-     * Recupera um perfil específico.
+     * Retrieves a specific profile.
      *
-     * @param id identificador do perfil
-     * @return DTO do perfil
-     * @throws java.util.NoSuchElementException caso não exista
+     * @param id profile identifier
+     * @return profile DTO
+     * @throws java.util.NoSuchElementException when it does not exist
      */
     public UserProfileDto getProfile(Long id) {
         var entity = userProfileRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -49,7 +49,7 @@ public class UserProfileService {
     }
 
     /**
-     * Cria um novo perfil a partir de um request validado.
+     * Creates a new profile from a validated request.
      */
     public UserProfileDto createProfile(UpsertUserProfileRequest request) {
         var entity = UserProfile.builder()
@@ -62,7 +62,7 @@ public class UserProfileService {
     }
 
     /**
-     * Atualiza um perfil existente com os dados do request.
+     * Updates an existing profile with request data.
      */
     public UserProfileDto updateProfile(Long id, UpsertUserProfileRequest request) {
         var entity = userProfileRepository.findById(id).orElseThrow();
@@ -74,14 +74,14 @@ public class UserProfileService {
     }
 
     /**
-     * Remove um perfil existente.
+     * Removes an existing profile.
      */
     public void deleteProfile(Long id) {
         userProfileRepository.deleteById(id);
     }
 
     /**
-     * Garante imutabilidade e evita referências nulas na lista de pranchas preferidas.
+     * Ensures immutability and avoids null references in the preferred board list.
      */
     private List<BoardType> normalizeBoards(List<BoardType> boards) {
         return boards == null ? new ArrayList<>() : new ArrayList<>(boards);

@@ -27,22 +27,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Endpoints responsáveis por expor previsões de swell, vento e maré por pico.
+ * Endpoints exposing swell, wind, and tide forecasts per spot.
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/forecasts")
-@Tag(name = "Forecast", description = "Consulta previsões para cada pico cadastrado.")
+@Tag(name = "Forecast", description = "Fetch forecasts for each registered spot.")
 public class ForecastController {
     private final ForecastService forecastService;
 
     /**
-     * Lista as previsões mais recentes de um pico.
+     * Lists the most recent forecasts for a spot.
      */
-    @Operation(summary = "Lista previsões por pico", description = "Retorna a previsão mais recente para o pico informado.")
+    @Operation(summary = "List forecasts per spot", description = "Returns the latest forecast for the requested spot.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Previsões retornadas"),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Forecasts returned"),
+            @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/spot/{spotId}")
     public ResponseEntity<?> getForecastsBySpot(
@@ -56,15 +56,15 @@ public class ForecastController {
         } catch (IllegalArgumentException e) {
             return errorResponse(HttpStatus.NOT_FOUND, e.getMessage(), e);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível carregar previsões no momento.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to load forecasts right now.", e);
         }
     }
 
-    @Operation(summary = "Sincroniza previsões via Stormglass", description = "Chama manualmente o provedor configurado para atualizar previsões. Útil quando há limite diário de requisições.")
+    @Operation(summary = "Sync forecasts through Stormglass", description = "Manually calls the configured provider to update forecasts. Useful when there is a daily request limit.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Sincronização realizada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Parâmetros inválidos", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado ao sincronizar", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Sync completed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid parameters", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected error during sync", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping("/sync")
     public ResponseEntity<?> syncForecasts(
@@ -79,7 +79,7 @@ public class ForecastController {
         } catch (IllegalArgumentException e) {
             return errorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível sincronizar previsões agora.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to sync forecasts right now.", e);
         }
     }
 

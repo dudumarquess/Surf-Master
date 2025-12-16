@@ -20,23 +20,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.NoSuchElementException;
 
 /**
- * Expõe os resumos inteligentes (LLM) para os picos.
+ * Exposes smart (LLM) daily summaries for surf spots.
  */
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/summaries")
-@Tag(name = "Surf Summary", description = "Fornece resumos inteligentes para planejar o surf.")
+@Tag(name = "Surf Summary", description = "Provides intelligent recaps to plan the surf session.")
 public class SurfSummaryController {
     private final SurfSummaryService surfSummaryService;
 
     /**
-     * Retorna (ou gera) o resumo do dia para um pico.
+     * Returns (or generates) the current day summary for a spot.
      */
-    @Operation(summary = "Obtém resumo do dia", description = "Busca um resumo pronto ou gera rapidamente caso não exista.")
+    @Operation(summary = "Fetch daily summary", description = "Returns an existing summary or quickly generates one if missing.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Resumo retornado"),
-            @ApiResponse(responseCode = "404", description = "Pico não encontrado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Summary returned"),
+            @ApiResponse(responseCode = "404", description = "Spot not found", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/spot/{spotId}/today")
     public ResponseEntity<?> getTodaySummary(@PathVariable Long spotId) {
@@ -44,9 +44,9 @@ public class SurfSummaryController {
             SurfSummaryDto summary = surfSummaryService.getOrGenerateToday(spotId);
             return ResponseEntity.ok(summary);
         } catch (NoSuchElementException e) {
-            return errorResponse(HttpStatus.NOT_FOUND, "Não conseguimos localizar o pico informado.", e);
+            return errorResponse(HttpStatus.NOT_FOUND, "We could not find the requested spot.", e);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao recuperar ou gerar o resumo.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve or generate the summary.", e);
         }
     }
 

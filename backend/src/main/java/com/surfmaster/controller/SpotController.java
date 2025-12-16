@@ -21,22 +21,22 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Responsável por listar e detalhar picos cadastrados na plataforma.
+ * Responsible for listing and detailing registered surf spots.
  */
 @RestController
 @RequestMapping("/api/spots")
 @RequiredArgsConstructor
-@Tag(name = "Spots", description = "Consulta de picos e informações detalhadas.")
+@Tag(name = "Spots", description = "Surf spot lookup and detailed information.")
 public class SpotController {
     private final SpotService spotService;
 
     /**
-     * Retorna a lista de picos disponíveis.
+     * Returns the list of available spots.
      */
-    @Operation(summary = "Lista picos disponíveis", description = "Retorna todos os picos cadastrados com informações básicas.")
+    @Operation(summary = "List available spots", description = "Returns every registered spot with basic information.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista recuperada"),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "List retrieved"),
+            @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping
     public ResponseEntity<?> getListOfSpots() {
@@ -44,27 +44,27 @@ public class SpotController {
             List<SpotDto> spots = spotService.listAll();
             return ResponseEntity.ok(spots);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível listar os picos no momento.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to list spots right now.", e);
         }
     }
 
     /**
-     * Retorna os detalhes de um pico específico.
+     * Returns the details of a specific spot.
      */
-    @Operation(summary = "Detalha um pico", description = "Busca informações completas para um pico específico.")
+    @Operation(summary = "Detail a spot", description = "Fetches comprehensive information for a specific spot.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Pico encontrado"),
-            @ApiResponse(responseCode = "404", description = "Pico não existe", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Erro inesperado", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Spot found"),
+            @ApiResponse(responseCode = "404", description = "Spot does not exist", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/{id}")
     public ResponseEntity<?> getSpotById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(spotService.getById(id));
         } catch (IllegalArgumentException | NoSuchElementException e) {
-            return errorResponse(HttpStatus.NOT_FOUND, "Pico não encontrado para o id " + id + ".", e);
+            return errorResponse(HttpStatus.NOT_FOUND, "Spot not found for id " + id + ".", e);
         } catch (Exception e) {
-            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar informações do pico.", e);
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch spot information.", e);
         }
     }
 

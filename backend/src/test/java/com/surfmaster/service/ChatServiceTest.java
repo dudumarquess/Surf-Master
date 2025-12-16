@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +43,9 @@ class ChatServiceTest {
 
     @Mock
     private UserProfileRepository userProfileRepository;
+
+    @Mock
+    private SurfAssistantService surfAssistantService;
 
     @InjectMocks
     private ChatService chatService;
@@ -101,17 +105,51 @@ class ChatServiceTest {
     void postUserMessagePersistsMessage() {
         var session = ChatSession.builder().id(6L).build();
         when(chatSessionRepository.findById(6L)).thenReturn(Optional.of(session));
+        var storedMessages = new java.util.ArrayList<ChatMessage>();
         when(chatMessageRepository.save(any(ChatMessage.class))).thenAnswer(invocation -> {
             ChatMessage entity = invocation.getArgument(0);
-            entity.setId(3L);
+            entity.setId((long) (storedMessages.size() + 1));
+            storedMessages.add(entity);
             return entity;
         });
+        when(chatMessageRepository.findByChatSessionIdOrderByCreatedAtAsc(6L))
+                .thenAnswer(invocation -> storedMessages);
+        when(surfAssistantService.respond(any(), any(), any())).thenReturn("Olá, iniciante, experimente Carcavelos!");
 
         ChatMessageDto dto = chatService.postUserMessage(new CreateChatMessageRequest(6L, ChatRole.USER, "fala aí"));
 
-        assertThat(dto.id()).isEqualTo(3L);
-        assertThat(dto.chatSessionId()).isEqualTo(6L);
-        assertThat(dto.content()).isEqualTo("fala aí");
-        verify(chatMessageRepository).save(any(ChatMessage.class));
+        assertThat(dto.chatRole()).isEqualTo(ChatRole.ASSISTANT);
+        assertThat(dto.content()).contains("Carcavelos");
+        verify(chatMessageRepository, org.mockito.Mockito.times(2)).save(any(ChatMessage.class));
+        verify(surfAssistantService).respond(any(), any(), any());
+    }
+
+    @Test
+    void resetSessionUpdatesSpotUserAndClearsHistory() {
+        var oldSpot = Spot.builder().id(1L).build();
+        var oldUser = UserProfile.builder().id(2L).build();
+        var session = ChatSession.builder()
+                .id(12L)
+                .spot(oldSpot)
+                .user(oldUser)
+                .createdAt(OffsetDateTime.now().minusHours(1))
+                .build();
+        session.setMessages(new ArrayList<>(List.of(ChatMessage.builder().id(1L).build())));
+
+        var newSpot = Spot.builder().id(9L).build();
+        var newUser = UserProfile.builder().id(7L).build();
+
+        when(chatSessionRepository.findById(12L)).thenReturn(Optional.of(session));
+        when(spotRepository.findById(9L)).thenReturn(Optional.of(newSpot));
+        when(userProfileRepository.findById(7L)).thenReturn(Optional.of(newUser));
+        when(chatSessionRepository.save(any(ChatSession.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ChatSessionDto dto = chatService.resetSession(12L, 9L, 7L);
+
+        assertThat(dto.spotId()).isEqualTo(9L);
+        assertThat(dto.userId()).isEqualTo(7L);
+        assertThat(dto.messages()).isEmpty();
+        verify(chatMessageRepository).deleteByChatSessionId(12L);
+        assertThat(session.getMessages()).isEmpty();
     }
 }

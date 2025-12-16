@@ -3,11 +3,11 @@ package com.surfmaster.dto;
 import java.time.OffsetDateTime;
 
 /**
- * Representa uma resposta padronizada de erro enviada aos consumidores da API.
+ * Represents a standardized error response sent to API consumers.
  *
- * @param message mensagem amigável descrevendo o problema
- * @param details detalhes técnicos opcionais para apoio ao suporte
- * @param timestamp instante em que o erro foi gerado
+ * @param message user-friendly description of the problem
+ * @param details optional technical details for support
+ * @param timestamp instant when the error was generated
  */
 public record ApiErrorResponse(
         String message,

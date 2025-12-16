@@ -22,7 +22,7 @@ public class DevDataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (spotRepo.count() > 0) return; // já populado
+        if (spotRepo.count() > 0) return; // already seeded
 
         Spot ericeira = Spot.builder()
                 .name("Ericeira - Ribeira d’Ilhas")
@@ -30,7 +30,7 @@ public class DevDataSeeder implements CommandLineRunner {
                 .swellBestDirection(Direction.NW)
                 .windBestDirection(Direction.E)
                 .recommendedLevel(UserLevel.INTERMEDIATE)
-                .notes(List.of("Direita longa", "Funciona melhor com maré média"))
+                .notes(List.of("Long right-hander", "Works best on mid tide"))
                 .build();
 
         Spot carcavelos = Spot.builder()
@@ -39,7 +39,7 @@ public class DevDataSeeder implements CommandLineRunner {
                 .swellBestDirection(Direction.W)
                 .windBestDirection(Direction.E)
                 .recommendedLevel(UserLevel.BEGINNER)
-                .notes(List.of("Beach break", "Melhor com offshore de leste"))
+                .notes(List.of("Beach break", "Best with easterly offshore"))
                 .build();
 
         Spot peniche = Spot.builder()
@@ -48,7 +48,7 @@ public class DevDataSeeder implements CommandLineRunner {
                 .swellBestDirection(Direction.W)
                 .windBestDirection(Direction.E)
                 .recommendedLevel(UserLevel.ADVANCED)
-                .notes(List.of("Tubos pesados", "Funciona bem com swell longo"))
+                .notes(List.of("Heavy barrels", "Works well with long-period swell"))
                 .build();
 
         Spot nazare = Spot.builder()
@@ -57,7 +57,7 @@ public class DevDataSeeder implements CommandLineRunner {
                 .swellBestDirection(Direction.NW)
                 .windBestDirection(Direction.E)
                 .recommendedLevel(UserLevel.ADVANCED)
-                .notes(List.of("Ondas gigantes no inverno", "Atenção às correntes"))
+                .notes(List.of("Giant winter waves", "Watch out for strong currents"))
                 .build();
 
         Spot caparica = Spot.builder()
@@ -66,7 +66,7 @@ public class DevDataSeeder implements CommandLineRunner {
                 .swellBestDirection(Direction.SW)
                 .windBestDirection(Direction.NE)
                 .recommendedLevel(UserLevel.INTERMEDIATE)
-                .notes(List.of("Funciona com maré média a vazante", "Pier ajuda a alinhar"))
+                .notes(List.of("Works on mid-to-outgoing tide", "Pier helps align the lineup"))
                 .build();
 
         Spot matosinhos = Spot.builder()
@@ -75,12 +75,12 @@ public class DevDataSeeder implements CommandLineRunner {
                 .swellBestDirection(Direction.NW)
                 .windBestDirection(Direction.E)
                 .recommendedLevel(UserLevel.BEGINNER)
-                .notes(List.of("Ondas suaves", "Boa opção para aulas"))
+                .notes(List.of("Soft waves", "Good option for lessons"))
                 .build();
 
         spotRepo.saveAll(List.of(ericeira, carcavelos, peniche, nazare, caparica, matosinhos));
 
-        // Forecasts de exemplo (próximas horas)
+        // Example forecasts (next hours)
         var now = OffsetDateTime.now().withMinute(0).withSecond(0).withNano(0);
 
         forecastRepo.saveAll(List.of(
@@ -138,7 +138,7 @@ public class DevDataSeeder implements CommandLineRunner {
                         .dataSource(ForecastSource.SEED)
                         .build(),
 
-                // Nazaré
+                // Nazare
                 Forecast.builder()
                         .spot(nazare)
                         .timestamp(now.plusHours(3))
@@ -193,7 +193,7 @@ public class DevDataSeeder implements CommandLineRunner {
                         .build()
         ));
 
-        System.out.println("✔ Seed dev: " + spotRepo.count() + " spots e "
+        System.out.println("✔ Dev seed: " + spotRepo.count() + " spots and "
                 + forecastRepo.count() + " forecasts.");
     }
 }

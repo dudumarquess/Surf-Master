@@ -17,15 +17,15 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 
 /**
- * Endpoint simples de verificação de disponibilidade.
+ * Simple availability endpoint.
  */
 @RestController
-@Tag(name = "Health", description = "Verifica se o backend está operacional.")
+@Tag(name = "Health", description = "Checks whether the backend is up.")
 public class HealthPingController {
-    @Operation(summary = "Ping de saúde", description = "Retorna um payload básico confirmando que o serviço está ativo.")
+    @Operation(summary = "Health ping", description = "Returns a simple payload confirming the service is alive.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Serviço respondendo"),
-            @ApiResponse(responseCode = "500", description = "Falha inesperada", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Service responding"),
+            @ApiResponse(responseCode = "500", description = "Unexpected failure", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/ping")
     public ResponseEntity<?> ping() {
@@ -36,7 +36,7 @@ public class HealthPingController {
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiErrorResponse.of("Serviço de saúde indisponível.", e.getMessage()));
+                    .body(ApiErrorResponse.of("Health service unavailable.", e.getMessage()));
         }
     }
 }

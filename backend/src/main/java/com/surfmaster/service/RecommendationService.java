@@ -108,7 +108,7 @@ public class RecommendationService {
     // --------- SCORE (V1 simples) ---------
 
     private double score(Spot spot, Forecast f, RecommendationRequest req) {
-        // direção swell e vento: 0..1
+        // swell and wind direction: 0..1
         double swellDir = dirMatch(spot.getSwellBestDirection(), f.getSwellDirection());
         double windDir  = dirMatch(spot.getWindBestDirection(), f.getWindDirection());
 
@@ -145,7 +145,7 @@ public class RecommendationService {
     private double windPenalty(Double windSpeed, Objective objective) {
         if (windSpeed == null) return 0.5; // conservador
 
-        // ATENÇÃO: ajuste conforme unidade (km/h vs m/s)
+        // NOTE: adjust according to unit (km/h vs m/s)
         double OK = 12.0;
         double BAD = 25.0;
 
@@ -183,15 +183,15 @@ public class RecommendationService {
         List<Reason> reasons = new ArrayList<>();
 
         if (spot.getSwellBestDirection() == f.getSwellDirection()) {
-            reasons.add(new Reason(ReasonType.SWELL, "Swell alinhado com a direção ideal do spot"));
+            reasons.add(new Reason(ReasonType.SWELL, "Swell aligned with the spot's ideal direction"));
         } else {
-            reasons.add(new Reason(ReasonType.SWELL, "Swell aceitável (não perfeito, mas dentro do possível)"));
+            reasons.add(new Reason(ReasonType.SWELL, "Swell acceptable (not perfect but within range)"));
         }
 
         if (spot.getWindBestDirection() == f.getWindDirection()) {
-            reasons.add(new Reason(ReasonType.WIND, "Vento alinhado com a direção ideal do spot"));
+            reasons.add(new Reason(ReasonType.WIND, "Wind aligned with the spot's ideal direction"));
         } else {
-            reasons.add(new Reason(ReasonType.WIND, "Vento não ideal, mas a penalidade ficou controlada"));
+            reasons.add(new Reason(ReasonType.WIND, "Wind not ideal, but penalty is under control"));
         }
 
         reasons.add(new Reason(ReasonType.OTHER, String.format("Score V1: %.1f/100", score)));
@@ -203,15 +203,15 @@ public class RecommendationService {
         List<Risk> risks = new ArrayList<>();
 
         if (f.getWindSpeed() != null && f.getWindSpeed() > 18) {
-            risks.add(new Risk(RiskType.STRONG_WIND, "Vento moderado/forte pode estragar a formação das ondas"));
+            risks.add(new Risk(RiskType.STRONG_WIND, "Moderate/strong wind may ruin wave formation"));
         }
 
         if (req.userLevel() == UserLevel.BEGINNER && f.getSwellHeight() != null && f.getSwellHeight() > 1.2) {
-            risks.add(new Risk(RiskType.TOO_BIG_FOR_LEVEL, "Altura de swell pode estar acima do ideal para iniciantes"));
+            risks.add(new Risk(RiskType.TOO_BIG_FOR_LEVEL, "Swell height may be above the ideal range for beginners"));
         }
 
         if (score < 60) {
-            risks.add(new Risk(RiskType.LOW_CONFIDENCE, "Condições inconsistentes: recomendação com baixa confiança"));
+            risks.add(new Risk(RiskType.LOW_CONFIDENCE, "Inconsistent conditions: recommendation has low confidence"));
         }
 
         // notas do spot como alertas
