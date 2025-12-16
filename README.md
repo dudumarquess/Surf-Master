@@ -59,6 +59,7 @@ Example:
 ```bash
 SURF_LLM_API_KEY=your_api_key_here
 ```
+
 ## ▶️ Running the Project
 
 ### Backend (local)

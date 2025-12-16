@@ -36,7 +36,7 @@ class ForecastControllerTest {
                 5.0, Direction.S,
                 1.2, 21, ForecastSource.MAGICSEAWEED
         );
-        when(forecastService.getLatestForSpot(10L)).thenReturn(List.of(dto));
+        when(forecastService.getForecastsForSpot(10L, null, null)).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/api/forecasts/spot/{spotId}", 10L))
                 .andExpect(status().isOk())

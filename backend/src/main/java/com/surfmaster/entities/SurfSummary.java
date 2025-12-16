@@ -21,6 +21,7 @@ public class SurfSummary {
     private OffsetDateTime generatedAt;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "forecast_window")
     private ForecastWindow window;
 
     private String summary;

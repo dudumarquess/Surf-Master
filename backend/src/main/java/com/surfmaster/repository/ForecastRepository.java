@@ -3,6 +3,7 @@ package com.surfmaster.repository;
 
 import com.surfmaster.entities.Forecast;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.OffsetDateTime;
@@ -21,5 +22,13 @@ public interface ForecastRepository extends JpaRepository<Forecast, Long> {
     """)
     List<Forecast> findAllInRangeWithSpot(OffsetDateTime from, OffsetDateTime to);
 
+    @Modifying
+    @Query("""
+        delete from Forecast f
+        where f.spot.id = :spotId
+            and f.timestamp >= :from
+            and f.timestamp <= :to
+    """)
+    void deleteAllForSpotBetween(Long spotId, OffsetDateTime from, OffsetDateTime to);
 
 }

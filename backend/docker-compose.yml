@@ -44,8 +44,13 @@ services:
       # LLM provider (troque fácil no futuro)
       - SURF_LLM_PROVIDER=${SURF_LLM_PROVIDER:-groq}
       - SURF_LLM_MODEL=${SURF_LLM_MODEL:-llama-3-8b}
-      - SURF_LLM_API_KEY=$${SURF_LLM_API_KEY:${SURF_LLM_API_KEY}}
+      - SURF_LLM_API_KEY=${SURF_LLM_API_KEY}
       - SURF_LLM_BASE_URL=${SURF_LLM_BASE_URL:-https://api.groq.com/openai/v1}
+
+      - SURF_FORECAST_PROVIDER=${SURF_FORECAST_PROVIDER:-stormglass}
+      - SURF_FORECAST_STORMGLASS_API_KEY=${SURF_FORECAST_STORMGLASS_API_KEY}
+
+      
     ports:
       - "8080:8080"
     networks:
