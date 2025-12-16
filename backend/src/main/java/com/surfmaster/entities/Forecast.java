@@ -44,8 +44,4 @@ public class Forecast {
     @Enumerated(EnumType.STRING)
     private ForecastSource dataSource;
 
-    private OffsetDateTime validFrom;
-
-    private OffsetDateTime validTo;
-
 }

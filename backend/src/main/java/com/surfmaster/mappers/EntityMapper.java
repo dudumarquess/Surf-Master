@@ -30,9 +30,7 @@ public class EntityMapper {
                 f.getWindDirection(),
                 f.getTideHeight(),
                 f.getWaterTemperature(),
-                f.getDataSource(),
-                f.getValidFrom(),
-                f.getValidTo()
+                f.getDataSource()
         );
     }
 

@@ -2,7 +2,6 @@ package com.surfmaster.controller;
 
 import com.surfmaster.dto.ApiErrorResponse;
 import com.surfmaster.dto.UpsertUserProfileRequest;
-import com.surfmaster.dto.UserProfileDto;
 import com.surfmaster.service.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -56,7 +56,6 @@ public class DevDataSeeder implements CommandLineRunner {
                         .windSpeed(6.0).windDirection(Direction.E)
                         .tideHeight(1.2).waterTemperature(17)
                         .dataSource(ForecastSource.SEED)
-                        .validFrom(now).validTo(now.plusHours(3))
                         .build(),
                 com.surfmaster.entities.Forecast.builder()
                         .spot(ericeira)
@@ -65,7 +64,6 @@ public class DevDataSeeder implements CommandLineRunner {
                         .windSpeed(5.0).windDirection(Direction.E)
                         .tideHeight(1.0).waterTemperature(17)
                         .dataSource(ForecastSource.SEED)
-                        .validFrom(now.plusHours(2)).validTo(now.plusHours(5))
                         .build(),
 
                 // Carcavelos
@@ -76,7 +74,6 @@ public class DevDataSeeder implements CommandLineRunner {
                         .windSpeed(8.0).windDirection(Direction.E)
                         .tideHeight(1.1).waterTemperature(18)
                         .dataSource(ForecastSource.SEED)
-                        .validFrom(now).validTo(now.plusHours(3))
                         .build()
         ));
 

@@ -34,8 +34,7 @@ class ForecastControllerTest {
                 1L, 10L, now,
                 2.3, 14, Direction.N,
                 5.0, Direction.S,
-                1.2, 21, ForecastSource.MAGICSEAWEED,
-                now, now.plusHours(3)
+                1.2, 21, ForecastSource.MAGICSEAWEED
         );
         when(forecastService.getLatestForSpot(10L)).thenReturn(List.of(dto));
 

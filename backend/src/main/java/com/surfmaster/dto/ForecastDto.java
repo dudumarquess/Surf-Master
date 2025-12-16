@@ -16,7 +16,5 @@ public record ForecastDto(
         Direction windDirection,
         Double tideHeight,
         Integer waterTemperature,
-        ForecastSource dataSource,
-        OffsetDateTime validFrom,
-        OffsetDateTime validTo
+        ForecastSource dataSource
 ) {}

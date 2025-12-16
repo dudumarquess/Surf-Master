@@ -47,8 +47,6 @@ class ForecastServiceTest {
                 .tideHeight(0.9)
                 .waterTemperature(23)
                 .dataSource(ForecastSource.MAGICSEAWEED)
-                .validFrom(now)
-                .validTo(now.plusHours(3))
                 .build();
         when(forecastRepository.findBySpotIdAfter(eq(7L), any(OffsetDateTime.class)))
                 .thenReturn(List.of(forecast));

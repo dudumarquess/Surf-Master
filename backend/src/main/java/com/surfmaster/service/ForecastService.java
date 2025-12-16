@@ -23,4 +23,13 @@ public class ForecastService {
                 .map(EntityMapper::toDto)
                 .toList();
     }
+
+    @Transactional
+    public List<Forecast> getForecastsBetween(
+            OffsetDateTime from,
+            OffsetDateTime to
+    ) {
+        return forecastRepository.findAllInRangeWithSpot(from, to);
+    }
+
 }
