@@ -35,10 +35,15 @@ public class SpotRagService {
     private static final Pattern SWELL_VALUE = Pattern.compile("(\\d+(?:[\\.,]\\d+)?)");
 
     public RagContext retrieveContext(String question, Long preferredSpotId) {
+        Spot preferredSpot = null;
+        if (preferredSpotId != null) {
+            preferredSpot = spotRepository.findById(preferredSpotId).orElse(null);
+        }
         AtomicReference<String> fallbackReason = new AtomicReference<>();
         if (question == null || question.isBlank()) {
             log.warn("Empty RAG question, returning empty context");
-            return new RagContext(List.of(), "Empty question, embeddings not generated.", preferredSpotId);
+            return new RagContext(List.of(), "Empty question, embeddings not generated.", preferredSpotId,
+                    preferredSpot != null ? preferredSpot.getName() : null);
         }
 
         log.debug("RAG question='{}'", question);
@@ -53,19 +58,22 @@ public class SpotRagService {
                 .limit(3)
                 .collect(ArrayList::new, List::add, List::addAll);
 
-        if (preferredSpotId != null) {
-            spotRepository.findById(preferredSpotId).ifPresent(preferredSpot -> {
-                RagSpot preferredRagSpot = buildRagSpot(preferredSpot, queryEmbedding, signals, fallbackReason);
-                ranked.removeIf(spot -> spot.spotId().equals(preferredSpotId));
-                ranked.add(0, preferredRagSpot);
-                if (ranked.size() > 3) {
-                    ranked.subList(3, ranked.size()).clear();
-                }
-            });
+        if (preferredSpot != null) {
+            RagSpot preferredRagSpot = buildRagSpot(preferredSpot, queryEmbedding, signals, fallbackReason);
+            ranked.removeIf(spot -> spot.spotId().equals(preferredSpotId));
+            ranked.add(0, preferredRagSpot);
+            if (ranked.size() > 3) {
+                ranked.subList(3, ranked.size()).clear();
+            }
         }
 
         log.info("RAG selected {} spots", ranked.size());
-        return new RagContext(ranked, fallbackReason.get(), preferredSpotId);
+        return new RagContext(
+                ranked,
+                fallbackReason.get(),
+                preferredSpotId,
+                preferredSpot != null ? preferredSpot.getName() : null
+        );
     }
 
     private double scoreWithPreference(RagSpot spot, Long preferredSpotId) {

@@ -43,6 +43,11 @@ public class SurfAssistantService {
 
         StringBuilder system = new StringBuilder(SYSTEM_PROMPT);
         system.append("\n\nCONTEXT:\n").append(context.buildContextBlock());
+        if (session.getSpot() != null) {
+            system.append("\n\nSESSION SPOT: The active chat session is for ")
+                    .append(session.getSpot().getName())
+                    .append(". Unless the user explicitly switches to another location, respond as if questions refer to this spot.");
+        }
         if (context.usedFallback()) {
             system.append("\n\nIMPORTANT NOTE: ").append(context.fallbackReason())
                     .append(" Let the user know that the recommendations may be more generic.");

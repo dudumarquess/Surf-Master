@@ -1,0 +1,79 @@
+<section class="hero">
+  <div class="hero-content">
+    <p class="eyebrow">Surf Master</p>
+    <h1>Welcome to your personalized surf assistant</h1>
+    <p class="hero-copy">
+      Discover the best spots, inspect live forecasts, and chat with the Surf Master to get tailored tips before you hit the water.
+    </p>
+    <a class="cta-button" href="#spots">Explore spots</a>
+  </div>
+</section>
+
+<section class="spots-section" id="spots">
+  <div class="section-header">
+    <div>
+      <p class="eyebrow">Live Data</p>
+      <h2>Surf spots supported today</h2>
+    </div>
+    <div class="state" *ngIf="loadingSpots">Loading spots...</div>
+    <div class="state error" *ngIf="spotsError">{{ spotsError }}</div>
+  </div>
+
+  <p class="section-copy">
+    Below you will find all registered spots coming directly from the backend. Each card lets you inspect the forecast and start a conversation about the spot.
+  </p>
+
+  <div class="spot-list" *ngIf="spots.length; else emptySpots">
+    <app-spot-card
+      *ngFor="let spot of spots; trackBy: trackSpot"
+      [spot]="spot"
+    ></app-spot-card>
+  </div>
+
+  <ng-template #emptySpots>
+    <div class="state muted" *ngIf="!loadingSpots && !spotsError">
+      No spots were returned by the API.
+    </div>
+  </ng-template>
+</section>
+
+<section class="profiles-section" id="profiles">
+  <div class="section-header">
+    <div>
+      <p class="eyebrow">Community</p>
+      <h2>Meet the surfer profiles</h2>
+    </div>
+    <button class="ghost-button" type="button" (click)="toggleProfiles()">
+      {{ profilesVisible ? 'Hide profiles' : 'Show profiles' }}
+    </button>
+  </div>
+
+  <p class="section-copy">
+    Use the button above to load profiles from the ProfileController. This gives you a quick glance at the preferred boards and levels stored in the backend.
+  </p>
+
+  <div class="profiles-panel" *ngIf="profilesVisible">
+    <div class="state" *ngIf="profilesLoading">Fetching profiles...</div>
+    <div class="state error" *ngIf="profilesError">{{ profilesError }}</div>
+    <div class="state muted" *ngIf="!profilesLoading && !profilesError && !profiles.length">
+      No surfer profiles registered yet.
+    </div>
+    <div class="profile-grid" *ngIf="!profilesLoading && !profilesError && profiles.length">
+      <article class="profile-card" *ngFor="let profile of profiles">
+        <h3>{{ profile.displayName || 'Anonymous Surfer' }}</h3>
+        <p class="meta">
+          Level:
+          <span *ngIf="profile.level; else anyLevel">{{ profile.level }}</span>
+          <ng-template #anyLevel>Any</ng-template>
+        </p>
+        <p class="meta">
+          Preferred boards:
+          <span *ngIf="profile.preferredBoards?.length; else noBoards">
+            {{ profile.preferredBoards?.join(', ') }}
+          </span>
+          <ng-template #noBoards>Not specified</ng-template>
+        </p>
+      </article>
+    </div>
+  </div>
+</section>

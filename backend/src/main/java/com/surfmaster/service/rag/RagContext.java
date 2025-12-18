@@ -5,7 +5,8 @@ import java.util.List;
 public record RagContext(
         List<RagSpot> spots,
         String fallbackReason,
-        Long preferredSpotId
+        Long preferredSpotId,
+        String preferredSpotName
 ) {
 
     public boolean hasContext() {
@@ -22,11 +23,16 @@ public record RagContext(
         }
         StringBuilder sb = new StringBuilder();
         if (preferredSpotId != null) {
-            sb.append("Session focus spot (ID ").append(preferredSpotId).append("). Treat this spot as primary if it appears in the context.\n");
+            sb.append("Session focus spot: ");
+            if (preferredSpotName != null && !preferredSpotName.isBlank()) {
+                sb.append(preferredSpotName).append(" ");
+            }
+            sb.append("(ID ").append(preferredSpotId).append("). ");
+            sb.append("Assume the user is talking about this spot unless they clearly mention another.\n");
         }
         for (int i = 0; i < spots.size(); i++) {
             RagSpot spot = spots.get(i);
-            sb.append("Spot ").append(i + 1).append(": ").append(spot.name()).append("\n");
+            sb.append("Spot ").append(i + 1).append(" (ID ").append(spot.spotId()).append("): ").append(spot.name()).append("\n");
             sb.append("  Recommended level: ").append(spot.level()).append("\n");
             sb.append("  Ideal swell: ").append(spot.swellDirection()).append("\n");
             sb.append("  Ideal wind: ").append(spot.windDirection()).append("\n");

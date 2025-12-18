@@ -1,0 +1,120 @@
+<article class="spot-card">
+  <header class="spot-card__header">
+    <div>
+      <p class="eyebrow">Spot</p>
+      <h3>{{ spot.name }}</h3>
+      <p class="coordinates">
+        {{ formatCoordinate(spot.latitude, 'lat') }}
+        ·
+        {{ formatCoordinate(spot.longitude, 'lng') }}
+      </p>
+    </div>
+    <ul class="meta">
+      <li><span>Level</span> {{ spot.recommendedLevel || 'Any' }}</li>
+      <li><span>Swell</span> {{ spot.swellBestDirection || 'N/A' }}</li>
+      <li><span>Wind</span> {{ spot.windBestDirection || 'N/A' }}</li>
+    </ul>
+  </header>
+
+  <section class="notes" *ngIf="spot.notes?.length">
+    <h4>Notes</h4>
+    <ul>
+      <li *ngFor="let note of spot.notes">{{ note }}</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <div class="panel__header">
+      <div>
+        <h4>Forecast</h4>
+        <p>Data returned from the ForecastController</p>
+      </div>
+      <button type="button" class="secondary-button" (click)="toggleForecasts()">
+        {{ forecastExpanded ? 'Hide forecast' : (forecasts.length ? 'Show forecast' : 'Load forecast') }}
+      </button>
+    </div>
+    <div *ngIf="forecastExpanded" class="panel__content">
+      <p class="state" *ngIf="forecastsLoading">Loading forecast...</p>
+      <p class="state error" *ngIf="forecastError">{{ forecastError }}</p>
+      <div class="state muted" *ngIf="!forecastsLoading && !forecastError && !forecasts.length">
+        Forecast data is not available yet for this spot.
+      </div>
+      <div class="forecast-grid" *ngIf="!forecastsLoading && !forecastError && forecasts.length">
+        <article class="forecast-card" *ngFor="let forecast of forecasts | slice:0:5">
+          <p class="forecast-card__timestamp">
+            {{ forecast.timestamp | date:'medium' }}
+            <span class="source" *ngIf="forecast.dataSource">· {{ forecast.dataSource }}</span>
+          </p>
+          <div class="forecast-card__row">
+            <span>Swell</span>
+            <strong>
+              {{ forecast.swellHeight ?? '–' }} m &#64;
+              {{ forecast.swellPeriod ?? '–' }} s
+              ({{ forecast.swellDirection || '–' }})
+            </strong>
+          </div>
+          <div class="forecast-card__row">
+            <span>Wind</span>
+            <strong>
+              {{ forecast.windSpeed ?? '–' }} kt
+              ({{ forecast.windDirection || '–' }})
+            </strong>
+          </div>
+          <div class="forecast-card__row">
+            <span>Tide / Water</span>
+            <strong>
+              {{ forecast.tideHeight ?? '–' }} m /
+              {{ forecast.waterTemperature ?? '–' }} ºC
+            </strong>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__header">
+      <div>
+        <h4>Surf Assistant chat</h4>
+        <p>Talk to the LLM about {{ spot.name }}</p>
+      </div>
+      <button
+        type="button"
+        class="secondary-button"
+        (click)="startChat()"
+        [disabled]="!!chatSession || openingChat"
+      >
+        {{ chatSession ? 'Chat ready' : (openingChat ? 'Opening...' : 'Start chat') }}
+      </button>
+    </div>
+    <div class="panel__content">
+      <p class="state error" *ngIf="chatError">{{ chatError }}</p>
+      <div class="chat-history" *ngIf="chatSession; else chatPlaceholder">
+        <div class="message" *ngFor="let message of chatMessages; trackBy: trackMessage" [class.mine]="message.chatRole === 'USER'">
+          <div class="message__meta">
+            <span>{{ message.chatRole === 'USER' ? 'You' : 'Surf Master' }}</span>
+            <span>{{ message.isPending ? 'Sending…' : formatTimestamp(message.createdAt) }}</span>
+          </div>
+          <p>{{ message.content }}</p>
+        </div>
+        <div *ngIf="!hasChatHistory" class="state muted">
+          Start the chat and send the first question to the assistant.
+        </div>
+      </div>
+      <ng-template #chatPlaceholder>
+        <p class="state muted">Open the chat to start a new session for this spot.</p>
+      </ng-template>
+      <div class="chat-input" *ngIf="chatSession">
+        <textarea
+          [(ngModel)]="chatInput"
+          placeholder="Ask anything about {{ spot.name }}..."
+          rows="3"
+          [disabled]="chatBusy"
+        ></textarea>
+        <button type="button" class="primary-button" (click)="sendMessage()" [disabled]="chatBusy || !chatInput.trim()">
+          {{ chatBusy ? 'Sending...' : 'Send message' }}
+        </button>
+      </div>
+    </div>
+  </section>
+</article>

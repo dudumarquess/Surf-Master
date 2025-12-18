@@ -1,0 +1,141 @@
+:host {
+  display: block;
+}
+
+.hero {
+  background: linear-gradient(135deg, #002c57, #0089d6);
+  color: #fff;
+  border-radius: 1.25rem;
+  padding: 3.5rem clamp(1.5rem, 5vw, 4rem);
+  margin-bottom: 2.5rem;
+}
+
+.hero-content {
+  max-width: 720px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+  color: inherit;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  margin: 0 0 1rem;
+}
+
+.hero-copy {
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #003a63;
+  border-radius: 999px;
+  padding: 0.85rem 1.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+.section-copy {
+  margin: 0 0 1.25rem;
+  color: #4a4a4a;
+}
+
+.state {
+  font-size: 0.9rem;
+}
+
+.state.error {
+  color: #b42318;
+}
+
+.state.muted {
+  color: #6b6b6b;
+}
+
+.spot-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.profiles-section {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e4e7ec;
+}
+
+.ghost-button {
+  border: 1px solid #003a63;
+  color: #003a63;
+  background: transparent;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ghost-button:hover {
+  background: rgba(0, 58, 99, 0.08);
+}
+
+.profiles-panel {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #e4e7ec;
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.profile-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+}
+
+.profile-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.profile-card .meta {
+  margin: 0.25rem 0;
+  color: #4a4a4a;
+}
